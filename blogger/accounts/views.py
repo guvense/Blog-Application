@@ -5,15 +5,49 @@ import jwt
 import json
 from rest_framework.response import Response
 from accounts.models import User
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets, mixins, status
+from rest_framework import generics
+from rest_framework.permissions import AllowAny
+from django.contrib.auth import authenticate, login
+
 
 from .serializers import PasswordSerializer
 
 
-class LoginViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
-    serializer_class = PasswordSerializer
-    def create(self, request, *args, **kwargs):
+class UserRegistrationView(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
+    serializer_class = PasswordSerializer
+    permission_classes = (AllowAny,)
+
+    def create(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        username = request.data['username']
+
+        user = User.objects.filter(username=username).first()
+        if user:
+            response = {"username exist"}
+            return Response(response)
+
+        serializer.save()
+        status_code = status.HTTP_201_CREATED
+        response = {
+            'success': 'True',
+            'status code': status_code,
+            'message': 'User registered  successfully',
+        }
+
+        return Response(response)
+
+
+class LoginViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+
+    serializer_class = PasswordSerializer
+    permission_classes = (AllowAny,)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
         if not request.data:
             return Response({"Error"})
 

@@ -27,7 +27,15 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'api_key': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization'
+        }
+    },
+}
 # Application definition
 
 INSTALLED_APPS = [
