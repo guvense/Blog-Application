@@ -23,6 +23,7 @@ schema_view = get_swagger_view(title='GUVENSE BLOG')
 urlpatterns = [
     path('swagger/', schema_view),
     path('admin/', admin.site.urls),
-    path('api/', include('accounts.urls')),
+    path('api/user/', include('accounts.urls')),
+    path('api/content/', include('contents.urls')),
 
 ]
